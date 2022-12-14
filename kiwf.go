@@ -1,4 +1,4 @@
-// Package kiwf Kill It With Fire, timeout lib with ticker
+// Package kiwf Kill It With Fire, is an advanced, yet simple internal heartbeat library for golang. The library removes the need to implement your own timeout procedures using ctx/timeout/deadline/cancel routines. Timeout, delay and startup time can be configured. Also there's a possibility to pass in a map[string]interface{} that will be passed into a configurable ExitFunction. If no ExitFunction is configured a panic will be generated.
 package kiwf
 
 import (

@@ -1,6 +1,8 @@
-# README IS WIP 
-
+# README IS WIP (lib is still unstable, do not use in production)
 [![go report card](https://goreportcard.com/badge/github.com/thisisdevelopment/kiwf "go report card")](https://goreportcard.com/report/github.com/thisisdevelopment/kiwf)
+[![codecov](https://codecov.io/gh/thisisdevelopment/kiwf/branch/master/graph/badge.svg)](https://codecov.io/gh/thisisdevelopment/kiwf)
+[![CircleCI](https://circleci.com/gh/thisisdevelopment/kiwf.svg?style=svg)](https://circleci.com/gh/thisisdevelopment/kiwf)
+[![GoDoc](https://godoc.org/github.com/thisisdevelopment/kiwf?status.svg)](https://godoc.org/github.com/thisisdevelopment/kiwf)
 
 
 # Introduction
