@@ -21,6 +21,7 @@ type iKiwf interface {
 
 type kiwf struct {
 	ticked time.Time
+	mtx    *sync.RWMutex
 	wg     *sync.WaitGroup
 	cfg    *Config
 	title  string
@@ -42,6 +43,7 @@ func New(title string, config *Config) (iKiwf, error) {
 
 	return &kiwf{
 		ticked: time.Now(),
+		mtx:    &sync.RWMutex{},
 		wg:     &sync.WaitGroup{},
 		cfg:    config,
 		title:  title,
@@ -67,7 +69,9 @@ func (k *kiwf) Start() {
 			case <-k.ctx.Done():
 				break LOOP
 			default:
+				k.mtx.RLock()
 				if time.Since(k.ticked) < k.cfg.Timeout+k.cfg.janitorInterval {
+					k.mtx.RUnlock()
 					time.Sleep(k.cfg.janitorInterval)
 					continue
 				}
@@ -92,11 +96,15 @@ func (k *kiwf) Close() {
 }
 
 func (k *kiwf) Tick() {
+	k.mtx.Lock()
+	defer k.mtx.Unlock()
 	k.ticked = time.Now()
 }
 
 // Lastaction returns the last touched time
 func (k *kiwf) LastAction() time.Time {
+	k.mtx.RLock()
+	defer k.mtx.RUnlock()
 	return k.ticked
 }
 
