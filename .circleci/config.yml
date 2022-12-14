@@ -27,8 +27,8 @@ jobs: # basic units of work in a run
       # Normally, this step would be in a custom primary image;
       # we've added it here for the sake of explanation.
       - run: go get github.com/thisisdevelopment/kiwf
-      - run: go get github.com/jstemmer/go-junit-report
-
+      - run: go install github.com/jstemmer/go-junit-report/v2@latest
+      
       - run:
           name: Run unit tests
           command: |
