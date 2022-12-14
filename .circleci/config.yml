@@ -10,7 +10,7 @@ jobs: # basic units of work in a run
           GO111MODULE: "on"
       # CircleCI PostgreSQL images available at: https://hub.docker.com/r/circleci/postgres/
     # directory where steps are run. Path must conform to the Go Workspace requirements
-    working_directory: /go/src/github.com/thisisdevelopment/kiwf
+    working_directory: /tmp/go/src/github.com/thisisdevelopment/kiwf
 
     environment: # environment variables for the build itself
       TEST_RESULTS: /tmp/test-results # path to where test results will be saved
@@ -43,10 +43,10 @@ jobs: # basic units of work in a run
 
       - run: make # pull and build dependencies for the project
 
-      - save_cache: # Store cache in the /go/pkg directory
+      - save_cache: # Store cache in the /tmp/go/pkg directory
           key: v1-pkg-cache
           paths:
-            - "/go/pkg"
+            - "/tmp/go/pkg"
 
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: /tmp/test-results
