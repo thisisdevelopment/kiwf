@@ -5,6 +5,13 @@
 [![GoDoc](https://godoc.org/github.com/thisisdevelopment/kiwf?status.svg)](https://godoc.org/github.com/thisisdevelopment/kiwf)
 
 
+# ISSUE with long running tests
+```
+go test -timeout 2400s -run ^Test_kiwf_Impl_3$ github.com/thisisdevelopment/kiwf -count=10000
+```
+These test fails sometimes
+
+
 # Introduction
 **Kill It With Fire** 🔥 🔫 is an advanced, yet simple internal heartbeat library for golang. The library removes the need to implement your own timeout procedures using ctx/timeout/deadline/cancel routines. Timeout, delay and startup time can be configured. Also there's a possibility to pass in a map[string]interface{} that will be passed into a configurable ExitFunction. If no ExitFunction is configured a panic will be generated.
 
