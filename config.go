@@ -7,7 +7,7 @@ import (
 const (
 	defaultDelayStartupTime = 1 * time.Second
 	defaultTimeout          = 1 * time.Second
-	janitorFactor           = 250
+	janitorFactor           = 10
 )
 
 type Config struct {

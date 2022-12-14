@@ -11,8 +11,8 @@ import (
 type iKiwf interface {
 	// Start the waiting, this will be run in a go-routine
 	Start()
-	// Tick to mark work done
-	Tick()
+	// Tick to mark work done, true is success
+	Tick() bool
 	// Close the worker
 	Close()
 	// LastAction get the last action time.Time received from Touch
@@ -75,6 +75,7 @@ func (k *kiwf) Start() {
 					time.Sleep(k.cfg.janitorInterval)
 					continue
 				}
+				k.mtx.RUnlock()
 				if k.cfg.ExitFunction == nil {
 					k.defaultExit(k.title, k.cfg.Passtru, time.Since(k.LastAction()))
 				} else {
@@ -95,10 +96,13 @@ func (k *kiwf) Close() {
 	k.wg.Wait()
 }
 
-func (k *kiwf) Tick() {
-	k.mtx.Lock()
+func (k *kiwf) Tick() bool {
+	if !k.mtx.TryLock() {
+		return false
+	}
 	defer k.mtx.Unlock()
 	k.ticked = time.Now()
+	return true
 }
 
 // Lastaction returns the last touched time
