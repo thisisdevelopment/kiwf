@@ -8,18 +8,7 @@ import (
 	"time"
 )
 
-type iKiwf interface {
-	// Start the waiting, this will be run in a go-routine
-	Start()
-	// Tick to mark work done, true is success
-	Tick() bool
-	// Close the worker
-	Close()
-	// LastAction get the last action time.Time received from Touch
-	LastAction() time.Time
-}
-
-type kiwf struct {
+type Kiwf struct {
 	ticked time.Time
 	mtx    *sync.RWMutex
 	wg     *sync.WaitGroup
@@ -30,7 +19,7 @@ type kiwf struct {
 }
 
 // New instantiates a new kiwf, title required, config can be nil. Check defaults
-func New(title string, config *Config) (iKiwf, error) {
+func New(title string, config *Config) (*Kiwf, error) {
 	if title == "" {
 		return nil, fmt.Errorf("title cannot be empty")
 	}
@@ -41,7 +30,7 @@ func New(title string, config *Config) (iKiwf, error) {
 	config.setDefaults()
 	ctx, cancel := context.WithCancel(context.Background())
 
-	return &kiwf{
+	return &Kiwf{
 		ticked: time.Now(),
 		mtx:    &sync.RWMutex{},
 		wg:     &sync.WaitGroup{},
@@ -54,7 +43,7 @@ func New(title string, config *Config) (iKiwf, error) {
 }
 
 // Start the waiting, this will be run in a go-routine
-func (k *kiwf) Start() {
+func (k *Kiwf) Start() {
 	// wait the startup delay
 	time.Sleep(k.cfg.DelayStartupTime)
 	k.wg.Add(1)
@@ -91,12 +80,12 @@ func (k *kiwf) Start() {
 	}()
 }
 
-func (k *kiwf) Close() {
+func (k *Kiwf) Close() {
 	k.closer()
 	k.wg.Wait()
 }
 
-func (k *kiwf) Tick() bool {
+func (k *Kiwf) Tick() bool {
 	if !k.mtx.TryLock() {
 		return false
 	}
@@ -106,13 +95,13 @@ func (k *kiwf) Tick() bool {
 }
 
 // Lastaction returns the last touched time
-func (k *kiwf) LastAction() time.Time {
+func (k *Kiwf) LastAction() time.Time {
 	k.mtx.RLock()
 	defer k.mtx.RUnlock()
 	return k.ticked
 }
 
-func (k *kiwf) defaultExit(title string, passtru map[string]interface{}, lastSince time.Duration) {
+func (k *Kiwf) defaultExit(title string, passtru map[string]interface{}, lastSince time.Duration) {
 	panic(
 		fmt.Sprintf("Killed it with fire '%s' time expired last action %v ago. set timeout %v. passtru vars %v, time obj %+v",
 			title,

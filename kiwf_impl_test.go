@@ -84,38 +84,21 @@ func Test_kiwf_Impl_2(t *testing.T) {
 
 // Test_kiwf_Impl_3, we mimic a process that has a 5ms timeout running for 50ms and doing work
 func Test_kiwf_Impl_3(t *testing.T) {
-
-	// internal settings
-	var (
-		timeout          = 5 * time.Millisecond
-		delayStartupTime = 1 * time.Nanosecond
-	)
-
-	// simulation settings
-	var (
-		testTimeout     = 50 * time.Millisecond
-		workerSleepTime = 1 * time.Millisecond
-	)
-
-	tt := "test case 3"
-	kiwf, err := New(tt, &Config{
-		DelayStartupTime: delayStartupTime,
-		Timeout:          timeout,
+	kiwf, err := New("tc3", &Config{
+		DelayStartupTime: time.Nanosecond,
+		Timeout:          5 * time.Millisecond,
 	})
 	if err != nil {
-		t.Errorf("got error '%s'", err.Error())
+		t.FailNow()
 	}
 
 	startTime := time.Now()
 	kiwf.Start()
 	defer kiwf.Close()
 
-	for {
+	for time.Since(startTime) < 50*time.Millisecond {
 		kiwf.Tick()
-		if time.Since(startTime) > testTimeout {
-			break
-		}
-		time.Sleep(workerSleepTime)
+		time.Sleep(time.Millisecond)
 	}
 }
 
