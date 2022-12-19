@@ -1,6 +1,7 @@
 package kiwf
 
 import (
+	"sync"
 	"testing"
 	"time"
 )
@@ -40,6 +41,7 @@ func Test_kiwf_Impl_1(t *testing.T) {
 
 func Test_kiwf_Impl_2(t *testing.T) {
 	var exitCalled = false
+	var mtx = &sync.Mutex{} // race detector in circleci
 	var testTitle = ""
 
 	var (
@@ -48,6 +50,9 @@ func Test_kiwf_Impl_2(t *testing.T) {
 	)
 
 	exitFunc := func(title string, _ map[string]interface{}) {
+		mtx.Lock()
+		defer mtx.Unlock()
+
 		testTitle = title
 		endTime = time.Now()
 		exitCalled = true
@@ -68,6 +73,8 @@ func Test_kiwf_Impl_2(t *testing.T) {
 
 	time.Sleep(2200 * time.Millisecond)
 
+	mtx.Lock()
+	defer mtx.Unlock()
 	// this should timeout
 	if time.Since(kiwf.LastAction()) < timeout {
 		t.Errorf("should be longer than timeout,last touched %v, end function called %v, got timeout %v", time.Since(kiwf.LastAction()), time.Since(endTime), timeout)
@@ -137,9 +144,13 @@ func Test_kiwf_Impl_5(t *testing.T) {
 		testPassed = "test123"
 		endTime    = time.Now()
 		timeout    = 1 * time.Second
+		mtx        = &sync.Mutex{} // race detector in circleci
+
 	)
 
 	exitFunc := func(title string, passtru map[string]interface{}) {
+		mtx.Lock()
+		defer mtx.Unlock()
 		testTitle = title
 		endTime = time.Now()
 		exitCalled = true
@@ -162,6 +173,8 @@ func Test_kiwf_Impl_5(t *testing.T) {
 	if time.Since(kiwf.LastAction()) < timeout {
 		t.Errorf("should be longer than timeout,last touched %v, end function called %v, got timeout %v", time.Since(kiwf.LastAction()), time.Since(endTime), timeout)
 	}
+	mtx.Lock()
+	defer mtx.Unlock()
 
 	if !exitCalled {
 		t.Error("exit called should have been called")
