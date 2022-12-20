@@ -11,7 +11,6 @@ import (
 type Kiwf struct {
 	ticked time.Time
 	mtx    *sync.RWMutex
-	wg     *sync.WaitGroup
 	cfg    *Config
 	title  string
 	closer context.CancelFunc
@@ -33,7 +32,6 @@ func New(title string, config *Config) (*Kiwf, error) {
 	return &Kiwf{
 		ticked: time.Now(),
 		mtx:    &sync.RWMutex{},
-		wg:     &sync.WaitGroup{},
 		cfg:    config,
 		title:  title,
 		closer: cancel,
@@ -46,7 +44,6 @@ func New(title string, config *Config) (*Kiwf, error) {
 func (k *Kiwf) Start() {
 	// wait the startup delay
 	time.Sleep(k.cfg.DelayStartupTime)
-	k.wg.Add(1)
 	go func() {
 		// at least sleep 1 janitor cycle
 		time.Sleep(k.cfg.janitorInterval)
@@ -76,13 +73,11 @@ func (k *Kiwf) Start() {
 				}
 			}
 		}
-		k.wg.Done()
 	}()
 }
 
 func (k *Kiwf) Close() {
 	k.closer()
-	k.wg.Wait()
 }
 
 func (k *Kiwf) Tick() bool {
@@ -102,6 +97,8 @@ func (k *Kiwf) LastAction() time.Time {
 }
 
 func (k *Kiwf) defaultExit(title string, passtru map[string]interface{}, lastSince time.Duration) {
+	k.mtx.RLock()
+	defer k.mtx.RUnlock()
 	panic(
 		fmt.Sprintf("Killed it with fire '%s' time expired last action %v ago. set timeout %v. passtru vars %v, time obj %+v",
 			title,
