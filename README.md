@@ -1,11 +1,11 @@
-# README IS WIP (lib is still unstable, do not use in production)
+# README IS WIP (lib is still unstable on macs, do not use in production)
 [![go report card](https://goreportcard.com/badge/github.com/thisisdevelopment/kiwf "go report card")](https://goreportcard.com/report/github.com/thisisdevelopment/kiwf)
 [![codecov](https://codecov.io/gh/thisisdevelopment/kiwf/branch/master/graph/badge.svg)](https://codecov.io/gh/thisisdevelopment/kiwf)
 [![CircleCI](https://circleci.com/gh/thisisdevelopment/kiwf.svg?style=svg)](https://circleci.com/gh/thisisdevelopment/kiwf)
 [![GoDoc](https://godoc.org/github.com/thisisdevelopment/kiwf?status.svg)](https://godoc.org/github.com/thisisdevelopment/kiwf)
 
 
-# ISSUE with long running tests
+# ISSUE with long running tests (macs)
 ```
 go test -timeout 2400s -run ^Test_kiwf_Impl_3$ github.com/thisisdevelopment/kiwf -count=10000
 ```
