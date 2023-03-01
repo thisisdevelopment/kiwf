@@ -89,6 +89,13 @@ func (k *Kiwf) Tick() bool {
 	return true
 }
 
+func (k *Kiwf) TickBlock() bool {
+	k.mtx.Lock()
+	defer k.mtx.Unlock()
+	k.ticked = time.Now()
+	return true
+}
+
 // Lastaction returns the last touched time
 func (k *Kiwf) LastAction() time.Time {
 	k.mtx.RLock()
